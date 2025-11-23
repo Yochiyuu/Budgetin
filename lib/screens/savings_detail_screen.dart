@@ -17,10 +17,8 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // TEMA: ORANGE (Konsisten dengan SavingsScreen)
   final Color _themeColor = Colors.orange;
 
-  // Cek tanggal mana yang ada transaksinya buat dikasih titik
   List<SavingLog> _getEventsForDay(DateTime day) {
     return widget.item.logs.where((log) {
       return isSameDay(log.date, day);
@@ -34,11 +32,11 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: Text(
+          title: Text(
           "Kalender Menabung",
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: _themeColor, // Orange
+        backgroundColor: _themeColor,
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -46,7 +44,6 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- BAGIAN KALENDER ---
             Container(
               margin: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -72,19 +69,17 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                 },
                 eventLoader: _getEventsForDay,
 
-                // Styling Kalender Konsisten Orange
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
-                    color: _themeColor.withValues(alpha: 0.5), // Orange muda
+                    color: _themeColor.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   selectedDecoration: BoxDecoration(
-                    color: _themeColor, // Orange pekat
+                    color: _themeColor,
                     shape: BoxShape.circle,
                   ),
                   markerDecoration: const BoxDecoration(
-                    color: Colors
-                        .redAccent, // Merah biar kontras dikit sama orange
+                    color: Colors.redAccent,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -99,7 +94,6 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
               ),
             ),
 
-            // --- LIST RIWAYAT ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Align(
@@ -115,7 +109,6 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
             ),
             const SizedBox(height: 10),
 
-            // List item
             item.logs.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.all(20),
@@ -126,7 +119,6 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: item.logs.length,
                     itemBuilder: (ctx, index) {
-                      // Sort biar yang baru di atas
                       final sortedLogs = List.from(item.logs)
                         ..sort((a, b) => b.date.compareTo(a.date));
                       final log = sortedLogs[index];
@@ -176,7 +168,7 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                             Text(
                               "+ Rp ${NumberFormat('#,###', 'id_ID').format(log.amount)}",
                               style: GoogleFonts.poppins(
-                                color: _themeColor, // Konsisten Orange
+                                color: _themeColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

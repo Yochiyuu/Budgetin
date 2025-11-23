@@ -2,7 +2,7 @@ class BillItem {
   final String id;
   final String title;
   final double amount;
-  final DateTime dueDate; // Tanggal jatuh tempo
+  final DateTime dueDate;
   bool isPaid;
 
   BillItem({

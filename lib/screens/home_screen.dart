@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import '../models/transaction.dart';
 import '../providers/transaction_provider.dart';
 import './add_transaction_screen.dart';
-import './analysis_screen.dart'; // Menu 2
-import './bill_screen.dart'; // Menu 3 (INI YANG TADI KURANG)
-import './savings_screen.dart'; // Menu 1
+import './analysis_screen.dart';
+import './bill_screen.dart';
+import './savings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return Column(
             children: [
-              // --- HEADER ---
               _buildHeader(
                 context,
                 currencyFormat,
@@ -59,10 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 totalExpense,
               ),
 
-              // --- MENU FITUR ---
               _buildFeatureMenu(context),
 
-              // --- LABEL RIWAYAT ---
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Row(
@@ -88,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              // --- LIST TRANSAKSI ---
               Expanded(
                 child: transactions.isEmpty
                     ? Center(
@@ -140,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- HEADER (Updated withValues) ---
   Widget _buildHeader(
     BuildContext context,
     NumberFormat format,
@@ -211,7 +206,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    // FIX: Ganti withOpacity jadi withValues
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
@@ -254,14 +248,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- MENU FEATURES (Updated withValues) ---
   Widget _buildFeatureMenu(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // Menu 1: Target Barang
           _buildMenuItem(
             context,
             icon: Icons.savings_rounded,
@@ -274,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // Menu 2: Analisis Keuangan
           _buildMenuItem(
             context,
             icon: Icons.pie_chart_rounded,
@@ -287,7 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // Menu 3: Catat Tagihan
           _buildMenuItem(
             context,
             icon: Icons.receipt_long_rounded,
@@ -300,7 +290,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // Menu 4: Lainnya (Placeholder)
           _buildMenuItem(
             context,
             icon: Icons.grid_view_rounded,
@@ -327,7 +316,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              // FIX: Ganti withOpacity jadi withValues
               color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(18),
             ),
@@ -349,7 +337,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- SUMMARY CARD (Updated withValues) ---
   Widget _buildSummaryCard(
     String title,
     String amount,
@@ -359,7 +346,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        // FIX: Ganti withOpacity jadi withValues
         color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(15),
       ),
@@ -406,7 +392,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- TRANSACTION ITEM (Updated withValues) ---
   Widget _buildTransactionItem(Transaction tx, NumberFormat format) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -416,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            // FIX: Ganti withOpacity jadi withValues
             color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 2,
             blurRadius: 10,

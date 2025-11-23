@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import './providers/transaction_provider.dart';
-import './screens/splash_screen.dart'; // <--- PASTIKAN ADA IMPORT INI
+import './screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,11 +65,7 @@ class MyApp extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          // ... (kode theme lainnya biarkan saja)
         ),
-
-        // --- BAGIAN PENTING ---
-        // Pastikan ini SplashScreen(), BUKAN HomeScreen()
         home: const SplashScreen(),
       ),
     );

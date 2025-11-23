@@ -26,20 +26,18 @@ class TransactionProvider with ChangeNotifier {
     return totalIncome - totalExpense;
   }
 
-  // --- FUNGSI BARU: LOAD DATA DARI DB ---
   Future<void> fetchAndSetData() async {
     final dataList = await DBHelper.getData('user_transactions');
 
-    // Konversi List<Map> dari DB menjadi List<Transaction> model kita
     _transactions = dataList
         .map(
           (item) => Transaction(
             id: item['id'],
             title: item['title'],
             amount: item['amount'],
-            date: DateTime.parse(item['date']), // String ISO ke DateTime
+            date: DateTime.parse(item['date']),
             category: item['category'],
-            isExpense: item['isExpense'] == 1, // Integer 1 jadi True
+            isExpense: item['isExpense'] == 1,
           ),
         )
         .toList();
@@ -47,7 +45,6 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // --- UPDATE: ADD KE DB & MEMORY ---
   Future<void> addTransaction(
     String title,
     double amount,
@@ -64,28 +61,23 @@ class TransactionProvider with ChangeNotifier {
       isExpense: isExpense,
     );
 
-    // 1. Simpan ke Memory (biar UI langsung update cepet)
     _transactions.add(newTx);
     notifyListeners();
 
-    // 2. Simpan ke SQLite (Background process)
     DBHelper.insert('user_transactions', {
       'id': newTx.id,
       'title': newTx.title,
       'amount': newTx.amount,
-      'date': newTx.date.toIso8601String(), // Simpan tanggal sebagai String ISO
+      'date': newTx.date.toIso8601String(),
       'category': newTx.category,
-      'isExpense': newTx.isExpense ? 1 : 0, // Simpan bool sebagai integer
+      'isExpense': newTx.isExpense ? 1 : 0,
     });
   }
 
-  // --- UPDATE: HAPUS DARI DB & MEMORY ---
   Future<void> deleteTransaction(String id) async {
-    // Hapus dari Memory
     _transactions.removeWhere((tx) => tx.id == id);
     notifyListeners();
 
-    // Hapus dari SQLite
     DBHelper.delete('user_transactions', id);
   }
 }

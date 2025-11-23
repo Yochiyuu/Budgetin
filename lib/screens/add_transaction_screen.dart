@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import ini PENTING buat Formatter
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -48,9 +48,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void _submitData() {
     final enteredTitle = _titleController.text;
 
-    // --- BAGIAN PENTING: BERSIHKAN TITIK SEBELUM DISIMPAN ---
-    // Kita hapus semua titik ('.') dari string, misal "10.000" jadi "10000"
-    // Karena tipe data double gabisa baca titik ribuan
     String cleanAmount = _amountController.text.replaceAll('.', '');
     final enteredAmount = double.tryParse(cleanAmount) ?? 0;
 
@@ -89,7 +86,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Switch Tipe
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -113,7 +109,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Input Judul
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -124,25 +119,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 15),
 
-              // 3. Input Nominal DENGAN FORMATTER
               TextField(
                 controller: _amountController,
                 decoration: const InputDecoration(
                   labelText: 'Nominal (Rp)',
                   border: OutlineInputBorder(),
-                  prefixText: 'Rp ', // Tambahan visual "Rp" di depan
+                  prefixText: 'Rp ',
                 ),
                 keyboardType: TextInputType.number,
-                // Masukkan formatter di sini
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly, // Cuma boleh angka
-                  CurrencyInputFormatter(), // Formatter buatan kita (ada di bawah)
+                  FilteringTextInputFormatter.digitsOnly,
+                  CurrencyInputFormatter(),
                 ],
               ),
 
               const SizedBox(height: 20),
 
-              // 4. Tanggal & Kategori
               Row(
                 children: [
                   Expanded(
@@ -207,26 +199,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 }
 
-// --- KELAS FORMATTER MATA UANG ---
-// Taruh ini di paling bawah file, di luar class AddTransactionScreen
 class CurrencyInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    // Jika kosong, biarkan kosong
     if (newValue.text.isEmpty) {
       return newValue.copyWith(text: '');
     }
 
-    // Hapus semua karakter non-angka (jaga-jaga)
     String newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // Parse ke integer
     double value = double.parse(newText);
 
-    // Format ulang jadi Rupiah (ID locale pakai titik sebagai pemisah ribuan)
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
       symbol: '',

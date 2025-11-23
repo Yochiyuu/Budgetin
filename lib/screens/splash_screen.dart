@@ -16,7 +16,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Tunggu 3 detik, lalu pindah ke HomeScreen
     Timer(const Duration(seconds: 3), () {
       Navigator.of(
         context,
@@ -27,12 +26,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF009688), // Warna Teal
+      backgroundColor: const Color(0xFF009688),
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 1. LOGO
             Container(
               width: 70,
               height: 70,
@@ -46,15 +44,13 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ],
                 image: const DecorationImage(
-                  // Pastikan path gambar ini benar
                   image: AssetImage('assets/icon/icon.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
 
-            const SizedBox(width: 15), // Jarak Spasi
-            // 2. TULISAN
+            const SizedBox(width: 15),
             Text(
               "Budgetin",
               style: GoogleFonts.poppins(

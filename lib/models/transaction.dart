@@ -3,8 +3,8 @@ class Transaction {
   final String title;
   final double amount;
   final DateTime date;
-  final String category; // Contoh: Makanan, Transport, Gaji
-  final bool isExpense; // true = Pengeluaran, false = Pemasukan
+  final String category;
+  final bool isExpense;
 
   Transaction({
     required this.id,
@@ -15,7 +15,6 @@ class Transaction {
     required this.isExpense,
   });
 
-  // Konversi ke Map untuk disimpan di Database (SQLite butuh Map)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -23,11 +22,10 @@ class Transaction {
       'amount': amount,
       'date': date.toIso8601String(),
       'category': category,
-      'isExpense': isExpense ? 1 : 0, // SQLite tidak punya boolean
+      'isExpense': isExpense ? 1 : 0,
     };
   }
 
-  // Konversi dari Map (Database) ke Object Dart
   factory Transaction.fromMap(Map<String, dynamic> map) {
     return Transaction(
       id: map['id'],

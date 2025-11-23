@@ -11,7 +11,7 @@ class SavingItem {
   final String title;
   final double targetAmount;
   double currentAmount;
-  List<SavingLog> logs; // <-- Tambahan: Riwayat Nabung
+  List<SavingLog> logs;
 
   SavingItem({
     required this.id,

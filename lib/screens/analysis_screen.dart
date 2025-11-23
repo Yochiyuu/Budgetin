@@ -12,7 +12,6 @@ class AnalysisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TEMA: BIRU (Konsisten dengan Menu Home)
     const Color themeColor = Colors.blue;
 
     final currencyFormat = NumberFormat.currency(
@@ -28,7 +27,7 @@ class AnalysisScreen extends StatelessWidget {
           "Analisis Keuangan",
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: themeColor, // Biru
+        backgroundColor: themeColor,
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -37,7 +36,6 @@ class AnalysisScreen extends StatelessWidget {
         builder: (context, provider, child) {
           final transactions = provider.transactions;
 
-          // 1. Ambil data pengeluaran 7 hari terakhir
           final weeklyData = _getWeeklySpending(transactions);
           final totalWeeklyExpense = weeklyData.values.fold(
             0.0,
@@ -49,7 +47,6 @@ class AnalysisScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- KARTU RINGKASAN (Gradient Biru) ---
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -58,7 +55,7 @@ class AnalysisScreen extends StatelessWidget {
                       colors: [
                         themeColor,
                         Colors.lightBlueAccent,
-                      ], // Gradient Biru
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -93,7 +90,6 @@ class AnalysisScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // --- JUDUL GRAFIK ---
                 Text(
                   "Grafik Mingguan",
                   style: GoogleFonts.poppins(
@@ -103,7 +99,6 @@ class AnalysisScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // --- CHART AREA ---
                 Container(
                   height: 300,
                   padding: const EdgeInsets.fromLTRB(10, 20, 20, 10),
@@ -179,7 +174,6 @@ class AnalysisScreen extends StatelessWidget {
                       ),
                       gridData: const FlGridData(show: false),
                       borderData: FlBorderData(show: false),
-                      // Pass themeColor ke generator grafik
                       barGroups: _generateBarGroups(weeklyData, themeColor),
                     ),
                   ),
@@ -187,7 +181,6 @@ class AnalysisScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // --- PENGELUARAN TERBESAR (Tetap Merah karena Expense, tapi Layout bersih) ---
                 Text(
                   "Pengeluaran Terbesar",
                   style: GoogleFonts.poppins(
@@ -204,8 +197,6 @@ class AnalysisScreen extends StatelessWidget {
       ),
     );
   }
-
-  // --- LOGIC HELPERS ---
 
   Map<int, double> _getWeeklySpending(List<Transaction> transactions) {
     Map<int, double> weekly = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0};
@@ -245,7 +236,7 @@ class AnalysisScreen extends StatelessWidget {
             toY: data[index] ?? 0,
             color: (data[index] ?? 0) > 0
                 ? color
-                : Colors.grey[200], // Pakai warna Biru
+                : Colors.grey[200],
             width: 16,
             borderRadius: BorderRadius.circular(4),
             backDrawRodData: BackgroundBarChartRodData(

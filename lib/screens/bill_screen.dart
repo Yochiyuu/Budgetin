@@ -17,10 +17,8 @@ class _BillScreenState extends State<BillScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // TEMA: UNGU (Konsisten dengan Menu Home)
   final Color _themeColor = Colors.purple;
 
-  // Data Tagihan (Dikosongkan sesuai request)
   final List<BillItem> _bills = [];
 
   final _currencyFormat = NumberFormat.currency(
@@ -71,7 +69,6 @@ class _BillScreenState extends State<BillScreen>
     );
   }
 
-  // --- FUNGSI HAPUS TAGIHAN ---
   void _deleteBill(String id) {
     showDialog(
       context: context,
@@ -107,7 +104,6 @@ class _BillScreenState extends State<BillScreen>
     );
   }
 
-  // --- DIALOG INPUT (Konsisten Ungu) ---
   void _showAddDialog() {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
@@ -165,7 +161,6 @@ class _BillScreenState extends State<BillScreen>
                 ),
                 const SizedBox(height: 20),
 
-                // Pilihan Tanggal
                 InkWell(
                   onTap: () async {
                     final picked = await showDatePicker(
@@ -178,7 +173,7 @@ class _BillScreenState extends State<BillScreen>
                           data: Theme.of(context).copyWith(
                             colorScheme: ColorScheme.light(
                               primary: _themeColor,
-                            ), // DatePicker Ungu
+                            ),
                           ),
                           child: child!,
                         );
@@ -218,7 +213,7 @@ class _BillScreenState extends State<BillScreen>
                         Icon(
                           Icons.calendar_today,
                           size: 18,
-                          color: _themeColor, // Ungu
+                          color: _themeColor,
                         ),
                       ],
                     ),
@@ -249,7 +244,7 @@ class _BillScreenState extends State<BillScreen>
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _themeColor, // Ungu
+                  backgroundColor: _themeColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -281,7 +276,7 @@ class _BillScreenState extends State<BillScreen>
           "Catat Tagihan",
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: _themeColor, // Ungu
+        backgroundColor: _themeColor,
         foregroundColor: Colors.white,
         centerTitle: true,
         bottom: TabBar(
@@ -306,7 +301,7 @@ class _BillScreenState extends State<BillScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddDialog,
-        backgroundColor: _themeColor, // Ungu
+        backgroundColor: _themeColor,
         icon: const Icon(Icons.add_task, color: Colors.white),
         label: Text(
           "Tambah Tagihan",
@@ -347,11 +342,8 @@ class _BillScreenState extends State<BillScreen>
         final bill = bills[index];
         final isOverdue = !bill.isPaid && bill.dueDate.isBefore(DateTime.now());
 
-        // Logic Warna Icon Tanggal
-        Color iconBgColor = _themeColor.withValues(
-          alpha: 0.1,
-        ); // Default Ungu muda
-        Color iconTextColor = _themeColor; // Default Ungu
+        Color iconBgColor = _themeColor.withValues(alpha: 0.1);
+        Color iconTextColor = _themeColor;
 
         if (isHistory) {
           iconBgColor = Colors.green.withValues(alpha: 0.1);
@@ -380,7 +372,6 @@ class _BillScreenState extends State<BillScreen>
           ),
           child: Row(
             children: [
-              // 1. Icon Tanggal
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -413,7 +404,6 @@ class _BillScreenState extends State<BillScreen>
               ),
               const SizedBox(width: 15),
 
-              // 2. Info Tagihan
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,25 +443,20 @@ class _BillScreenState extends State<BillScreen>
                 ),
               ),
 
-              // 3. Tombol Aksi (Bayar & Hapus)
               if (!isHistory)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Tombol Hapus (Baru)
                     IconButton(
                       onPressed: () => _deleteBill(bill.id),
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       tooltip: 'Hapus',
                     ),
                     const SizedBox(width: 8),
-                    // Tombol Bayar
                     ElevatedButton(
                       onPressed: () => _markAsPaid(bill.id),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isOverdue
-                            ? Colors.red
-                            : _themeColor, // Ungu normal, Merah kalau telat
+                        backgroundColor: isOverdue ? Colors.red : _themeColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -490,9 +475,6 @@ class _BillScreenState extends State<BillScreen>
                   ],
                 )
               else
-                // Di riwayat lunas juga bisa dikasih tombol hapus kalau mau,
-                // tapi sementara saya kasih check icon saja sesuai default sebelumnya,
-                // ditambah opsi delete jika perlu.
                 Row(
                   children: [
                     IconButton(

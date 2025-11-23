@@ -17,7 +17,6 @@ class SavingsScreen extends StatefulWidget {
 class _SavingsScreenState extends State<SavingsScreen> {
   final List<SavingItem> _savings = [];
 
-  // Warna tema didefinisikan di sini (bukan const)
   final Color _themeColor = Colors.orange;
 
   final _currencyFormat = NumberFormat.currency(
@@ -26,7 +25,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
     decimalDigits: 0,
   );
 
-  // --- LOGIC CRUD ---
   void _addNewTarget(String title, double target) {
     final newItem = SavingItem(
       id: const Uuid().v4(),
@@ -66,7 +64,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
     );
   }
 
-  // --- DIALOGS ---
   void _showAddDialog() {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
@@ -475,7 +472,6 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        // FIX: const DIHAPUS DISINI AGAR TIDAK ERROR
                         icon: Icon(
                           Icons.calendar_month_outlined,
                           color: _themeColor,
