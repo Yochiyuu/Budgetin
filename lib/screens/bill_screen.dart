@@ -20,21 +20,8 @@ class _BillScreenState extends State<BillScreen>
   // TEMA: UNGU (Konsisten dengan Menu Home)
   final Color _themeColor = Colors.purple;
 
-  // Data Dummy Awal
-  final List<BillItem> _bills = [
-    BillItem(
-      id: '1',
-      title: 'Listrik Token',
-      amount: 200000,
-      dueDate: DateTime.now().add(const Duration(days: 2)),
-    ),
-    BillItem(
-      id: '2',
-      title: 'WiFi IndiHome',
-      amount: 350000,
-      dueDate: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ];
+  // Data Tagihan (Dikosongkan sesuai request)
+  final List<BillItem> _bills = [];
 
   final _currencyFormat = NumberFormat.currency(
     locale: 'id_ID',
@@ -80,6 +67,42 @@ class _BillScreenState extends State<BillScreen>
         content: Text("Tagihan lunas! Mantap!", style: GoogleFonts.poppins()),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  // --- FUNGSI HAPUS TAGIHAN ---
+  void _deleteBill(String id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          "Hapus Tagihan?",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Yakin mau menghapus tagihan ini?",
+          style: GoogleFonts.poppins(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _bills.removeWhere((item) => item.id == id);
+              });
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text("Tagihan dihapus")));
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Hapus", style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
@@ -430,31 +453,59 @@ class _BillScreenState extends State<BillScreen>
                 ),
               ),
 
-              // 3. Tombol Aksi
+              // 3. Tombol Aksi (Bayar & Hapus)
               if (!isHistory)
-                ElevatedButton(
-                  onPressed: () => _markAsPaid(bill.id),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isOverdue
-                        ? Colors.red
-                        : _themeColor, // Ungu normal, Merah kalau telat
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Tombol Hapus (Baru)
+                    IconButton(
+                      onPressed: () => _deleteBill(bill.id),
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      tooltip: 'Hapus',
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    const SizedBox(width: 8),
+                    // Tombol Bayar
+                    ElevatedButton(
+                      onPressed: () => _markAsPaid(bill.id),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isOverdue
+                            ? Colors.red
+                            : _themeColor, // Ungu normal, Merah kalau telat
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        "Bayar",
+                        style: GoogleFonts.poppins(fontSize: 12),
+                      ),
                     ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    "Bayar",
-                    style: GoogleFonts.poppins(fontSize: 12),
-                  ),
+                  ],
                 )
               else
-                const Icon(Icons.check_circle, color: Colors.green),
+                // Di riwayat lunas juga bisa dikasih tombol hapus kalau mau,
+                // tapi sementara saya kasih check icon saja sesuai default sebelumnya,
+                // ditambah opsi delete jika perlu.
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => _deleteBill(bill.id),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.grey,
+                      ),
+                      tooltip: 'Hapus Riwayat',
+                    ),
+                    const Icon(Icons.check_circle, color: Colors.green),
+                  ],
+                ),
             ],
           ),
         );
