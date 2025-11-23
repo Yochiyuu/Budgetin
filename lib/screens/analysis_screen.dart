@@ -12,6 +12,9 @@ class AnalysisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TEMA: BIRU (Konsisten dengan Menu Home)
+    const Color themeColor = Colors.blue;
+
     final currencyFormat = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -25,7 +28,7 @@ class AnalysisScreen extends StatelessWidget {
           "Analisis Keuangan",
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: themeColor, // Biru
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -46,21 +49,23 @@ class AnalysisScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- KARTU RINGKASAN ---
+                // --- KARTU RINGKASAN (Gradient Biru) ---
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF009688), Color(0xFF4DB6AC)],
+                      colors: [
+                        themeColor,
+                        Colors.lightBlueAccent,
+                      ], // Gradient Biru
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        // FIX: Ganti withOpacity jadi withValues
-                        color: Colors.teal.withValues(alpha: 0.3),
+                        color: themeColor.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -106,7 +111,6 @@ class AnalysisScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
-                      // FIX: Ganti withOpacity jadi withValues
                       BoxShadow(
                         color: Colors.grey.withValues(alpha: 0.05),
                         blurRadius: 10,
@@ -119,8 +123,6 @@ class AnalysisScreen extends StatelessWidget {
                       maxY: _getMaxY(weeklyData.values.toList()),
                       barTouchData: BarTouchData(
                         touchTooltipData: BarTouchTooltipData(
-                          // FIX: HAPUS tooltipRoundedRadius (sudah tidak didukung)
-                          // Tambahkan warna background tooltip biar jelas
                           getTooltipColor: (_) => Colors.blueGrey,
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             return BarTooltipItem(
@@ -177,14 +179,15 @@ class AnalysisScreen extends StatelessWidget {
                       ),
                       gridData: const FlGridData(show: false),
                       borderData: FlBorderData(show: false),
-                      barGroups: _generateBarGroups(weeklyData),
+                      // Pass themeColor ke generator grafik
+                      barGroups: _generateBarGroups(weeklyData, themeColor),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 30),
 
-                // --- PENGELUARAN TERBESAR ---
+                // --- PENGELUARAN TERBESAR (Tetap Merah karena Expense, tapi Layout bersih) ---
                 Text(
                   "Pengeluaran Terbesar",
                   style: GoogleFonts.poppins(
@@ -206,17 +209,12 @@ class AnalysisScreen extends StatelessWidget {
 
   Map<int, double> _getWeeklySpending(List<Transaction> transactions) {
     Map<int, double> weekly = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0};
-
     final now = DateTime.now();
-    // Cari tanggal hari Senin minggu ini
-    // Logika disederhanakan agar tidak error range
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
     for (var tx in transactions) {
-      // Pastikan hanya pengeluaran dan masuk range minggu ini
       if (tx.isExpense) {
-        // Cek tanggal manual (remove time part untuk akurasi)
         final txDate = DateTime(tx.date.year, tx.date.month, tx.date.day);
         final start = DateTime(
           startOfWeek.year,
@@ -235,14 +233,19 @@ class AnalysisScreen extends StatelessWidget {
     return weekly;
   }
 
-  List<BarChartGroupData> _generateBarGroups(Map<int, double> data) {
+  List<BarChartGroupData> _generateBarGroups(
+    Map<int, double> data,
+    Color color,
+  ) {
     return List.generate(7, (index) {
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             toY: data[index] ?? 0,
-            color: (data[index] ?? 0) > 0 ? Colors.teal : Colors.grey[200],
+            color: (data[index] ?? 0) > 0
+                ? color
+                : Colors.grey[200], // Pakai warna Biru
             width: 16,
             borderRadius: BorderRadius.circular(4),
             backDrawRodData: BackgroundBarChartRodData(

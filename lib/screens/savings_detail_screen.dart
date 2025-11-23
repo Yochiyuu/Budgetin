@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart'; // <--- INI WAJIB ADA
+import 'package:table_calendar/table_calendar.dart';
 
 import '../models/saving_item.dart';
 
@@ -17,7 +17,10 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Cek tanggal mana yang ada transaksinya buat dikasih titik oranye
+  // TEMA: ORANGE (Konsisten dengan SavingsScreen)
+  final Color _themeColor = Colors.orange;
+
+  // Cek tanggal mana yang ada transaksinya buat dikasih titik
   List<SavingLog> _getEventsForDay(DateTime day) {
     return widget.item.logs.where((log) {
       return isSameDay(log.date, day);
@@ -31,9 +34,14 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: Text("Kalender Menabung", style: GoogleFonts.poppins()),
-        backgroundColor: Colors.teal,
+        title: Text(
+          "Kalender Menabung",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: _themeColor, // Orange
         foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,7 +52,12 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                  ),
+                ],
               ),
               child: TableCalendar(
                 firstDay: DateTime.utc(2023, 1, 1),
@@ -57,42 +70,46 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                     _focusedDay = focusedDay;
                   });
                 },
-                // Ini logika untuk menampilkan titik di tanggal
                 eventLoader: _getEventsForDay,
 
-                // Styling Kalender biar kelihatan
-                calendarStyle: const CalendarStyle(
+                // Styling Kalender Konsisten Orange
+                calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
-                    color: Colors.tealAccent,
+                    color: _themeColor.withValues(alpha: 0.5), // Orange muda
                     shape: BoxShape.circle,
                   ),
                   selectedDecoration: BoxDecoration(
-                    color: Colors.teal,
+                    color: _themeColor, // Orange pekat
                     shape: BoxShape.circle,
                   ),
-                  markerDecoration: BoxDecoration(
-                    color: Colors.orange,
+                  markerDecoration: const BoxDecoration(
+                    color: Colors
+                        .redAccent, // Merah biar kontras dikit sama orange
                     shape: BoxShape.circle,
-                  ), // Titik oranye
+                  ),
                 ),
                 headerStyle: HeaderStyle(
                   formatButtonVisible: false,
                   titleCentered: true,
                   titleTextStyle: GoogleFonts.poppins(
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
 
-            // --- LIST RIWAYAT DI BAWAHNYA ---
+            // --- LIST RIWAYAT ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Riwayat: ${item.title}",
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Riwayat: ${item.title}",
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -109,25 +126,57 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: item.logs.length,
                     itemBuilder: (ctx, index) {
-                      final log = item.logs[index];
+                      // Sort biar yang baru di atas
+                      final sortedLogs = List.from(item.logs)
+                        ..sort((a, b) => b.date.compareTo(a.date));
+                      final log = sortedLogs[index];
+
                       return Container(
                         margin: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 5,
+                          vertical: 6,
                         ),
-                        padding: const EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withValues(alpha: 0.05),
+                              blurRadius: 5,
+                            ),
+                          ],
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(DateFormat('dd MMM yyyy').format(log.date)),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _themeColor.withValues(alpha: 0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_upward_rounded,
+                                    color: _themeColor,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  DateFormat('dd MMM yyyy').format(log.date),
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
                             Text(
-                              "Rp ${NumberFormat('#,###', 'id_ID').format(log.amount)}",
-                              style: const TextStyle(
-                                color: Colors.green,
+                              "+ Rp ${NumberFormat('#,###', 'id_ID').format(log.amount)}",
+                              style: GoogleFonts.poppins(
+                                color: _themeColor, // Konsisten Orange
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -136,6 +185,7 @@ class _SavingsDetailScreenState extends State<SavingsDetailScreen> {
                       );
                     },
                   ),
+            const SizedBox(height: 30),
           ],
         ),
       ),

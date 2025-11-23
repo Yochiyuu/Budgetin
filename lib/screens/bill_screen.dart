@@ -17,7 +17,10 @@ class _BillScreenState extends State<BillScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // Data Dummy Awal (Bisa dihapus nanti)
+  // TEMA: UNGU (Konsisten dengan Menu Home)
+  final Color _themeColor = Colors.purple;
+
+  // Data Dummy Awal
   final List<BillItem> _bills = [
     BillItem(
       id: '1',
@@ -29,9 +32,7 @@ class _BillScreenState extends State<BillScreen>
       id: '2',
       title: 'WiFi IndiHome',
       amount: 350000,
-      dueDate: DateTime.now().subtract(
-        const Duration(days: 1),
-      ), // Ceritanya telat bayar
+      dueDate: DateTime.now().subtract(const Duration(days: 1)),
     ),
   ];
 
@@ -53,7 +54,6 @@ class _BillScreenState extends State<BillScreen>
     super.dispose();
   }
 
-  // --- LOGIC TAMBAH TAGIHAN ---
   void _addNewBill(String title, double amount, DateTime date) {
     setState(() {
       _bills.add(
@@ -67,7 +67,6 @@ class _BillScreenState extends State<BillScreen>
     });
   }
 
-  // --- LOGIC BAYAR TAGIHAN ---
   void _markAsPaid(String id) {
     setState(() {
       final index = _bills.indexWhere((item) => item.id == id);
@@ -85,7 +84,7 @@ class _BillScreenState extends State<BillScreen>
     );
   }
 
-  // --- DIALOG INPUT ---
+  // --- DIALOG INPUT (Konsisten Ungu) ---
   void _showAddDialog() {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
@@ -94,9 +93,11 @@ class _BillScreenState extends State<BillScreen>
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        // Pakai StatefulBuilder biar DatePicker update text
         builder: (context, setDialogState) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             title: Text(
               "Tagihan Baru",
               style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
@@ -106,18 +107,32 @@ class _BillScreenState extends State<BillScreen>
               children: [
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Nama Tagihan",
                     hintText: "Misal: Kostan",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: _themeColor, width: 2),
+                    ),
                   ),
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: amountController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Nominal (Rp)",
                     hintText: "0",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: _themeColor, width: 2),
+                    ),
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -135,6 +150,16 @@ class _BillScreenState extends State<BillScreen>
                       initialDate: DateTime.now(),
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2030),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: _themeColor,
+                            ), // DatePicker Ungu
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (picked != null) {
                       setDialogState(() {
@@ -167,10 +192,10 @@ class _BillScreenState extends State<BillScreen>
                                 : Colors.black,
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           Icons.calendar_today,
                           size: 18,
-                          color: Colors.teal,
+                          color: _themeColor, // Ungu
                         ),
                       ],
                     ),
@@ -181,7 +206,7 @@ class _BillScreenState extends State<BillScreen>
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text("Batal"),
+                child: Text("Batal", style: TextStyle(color: _themeColor)),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -200,7 +225,16 @@ class _BillScreenState extends State<BillScreen>
                     );
                   }
                 },
-                child: const Text("Simpan"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _themeColor, // Ungu
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  "Simpan",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           );
@@ -211,13 +245,10 @@ class _BillScreenState extends State<BillScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Pisahkan List Lunas & Belum
     final unpaidBills = _bills.where((b) => !b.isPaid).toList();
-    // Sort biar yang jatuh temponya dekat ada diatas
     unpaidBills.sort((a, b) => a.dueDate.compareTo(b.dueDate));
 
     final paidBills = _bills.where((b) => b.isPaid).toList();
-    // Sort history biar yang baru dibayar ada diatas
     paidBills.sort((a, b) => b.dueDate.compareTo(a.dueDate));
 
     return Scaffold(
@@ -227,18 +258,19 @@ class _BillScreenState extends State<BillScreen>
           "Catat Tagihan",
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.purple, // Warna beda (Ungu) sesuai icon home
+        backgroundColor: _themeColor, // Ungu
         foregroundColor: Colors.white,
+        centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
           labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold),
           unselectedLabelStyle: GoogleFonts.poppins(),
-          labelColor: Colors.white, // Text active
-          unselectedLabelColor: Colors.white70, // Text inactive
-          tabs: [
-            const Tab(text: "Belum Bayar"),
-            const Tab(text: "Riwayat Lunas"),
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          tabs: const [
+            Tab(text: "Belum Bayar"),
+            Tab(text: "Riwayat Lunas"),
           ],
         ),
       ),
@@ -251,7 +283,7 @@ class _BillScreenState extends State<BillScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddDialog,
-        backgroundColor: Colors.purple,
+        backgroundColor: _themeColor, // Ungu
         icon: const Icon(Icons.add_task, color: Colors.white),
         label: Text(
           "Tambah Tagihan",
@@ -292,6 +324,20 @@ class _BillScreenState extends State<BillScreen>
         final bill = bills[index];
         final isOverdue = !bill.isPaid && bill.dueDate.isBefore(DateTime.now());
 
+        // Logic Warna Icon Tanggal
+        Color iconBgColor = _themeColor.withValues(
+          alpha: 0.1,
+        ); // Default Ungu muda
+        Color iconTextColor = _themeColor; // Default Ungu
+
+        if (isHistory) {
+          iconBgColor = Colors.green.withValues(alpha: 0.1);
+          iconTextColor = Colors.green;
+        } else if (isOverdue) {
+          iconBgColor = Colors.red.withValues(alpha: 0.1);
+          iconTextColor = Colors.red;
+        }
+
         return Container(
           margin: const EdgeInsets.only(bottom: 15),
           padding: const EdgeInsets.all(16),
@@ -303,7 +349,7 @@ class _BillScreenState extends State<BillScreen>
                 : null,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -311,18 +357,14 @@ class _BillScreenState extends State<BillScreen>
           ),
           child: Row(
             children: [
-              // 1. Icon Tanggal (Kiri)
+              // 1. Icon Tanggal
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: isHistory
-                      ? Colors.green.withOpacity(0.1)
-                      : (isOverdue
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.purple.withOpacity(0.1)),
+                  color: iconBgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -332,9 +374,7 @@ class _BillScreenState extends State<BillScreen>
                       style: GoogleFonts.poppins(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: isHistory
-                            ? Colors.green
-                            : (isOverdue ? Colors.red : Colors.purple),
+                        color: iconTextColor,
                       ),
                     ),
                     Text(
@@ -342,9 +382,7 @@ class _BillScreenState extends State<BillScreen>
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isHistory
-                            ? Colors.green
-                            : (isOverdue ? Colors.red : Colors.purple),
+                        color: iconTextColor,
                       ),
                     ),
                   ],
@@ -352,7 +390,7 @@ class _BillScreenState extends State<BillScreen>
               ),
               const SizedBox(width: 15),
 
-              // 2. Info Tagihan (Tengah)
+              // 2. Info Tagihan
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,12 +430,14 @@ class _BillScreenState extends State<BillScreen>
                 ),
               ),
 
-              // 3. Tombol Aksi (Kanan)
+              // 3. Tombol Aksi
               if (!isHistory)
                 ElevatedButton(
                   onPressed: () => _markAsPaid(bill.id),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isOverdue ? Colors.red : Colors.purple,
+                    backgroundColor: isOverdue
+                        ? Colors.red
+                        : _themeColor, // Ungu normal, Merah kalau telat
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -423,7 +463,6 @@ class _BillScreenState extends State<BillScreen>
   }
 }
 
-// Formatter Rupiah (Sama kayak sebelumnya, copy aja biar ga error)
 class CurrencyInputFormatter extends TextInputFormatter {
   static final NumberFormat _formatter = NumberFormat.currency(
     locale: 'id_ID',
